@@ -1,0 +1,20 @@
+# Build output
+build/
+*.apk
+*.idsig
+
+# Signing keys: never commit these. Android only installs an update signed with the same key,
+# so keep yours somewhere safe outside the repo.
+keystore/
+*.jks
+*.keystore
+
+# Local SDK/JDK copy, if you keep one next to the project (see README)
+.toolchain/
+
+# Editors and OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

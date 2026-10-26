@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.helm.launcher">
+
+    <!-- Swipe down on home opens the notification shade. -->
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <!-- "Uninstall" in the long-press menu. -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <!-- "Also use on lock screen" sets the phone's wallpaper to Helm's. -->
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <!-- The Weather widget (Open-Meteo). Nothing else uses the network. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- The Agenda widget, only after you tap it and allow it. -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <!-- Quick toggles: show whether Wi-Fi is on; Do Not Disturb (you grant it in Settings). -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Away Time reads screen on/off history; you grant Usage access in Settings. -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+    <!-- Fingerprint before showing hidden apps. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- The Steps widget reads the phone's step counter, only after you allow it. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <!-- Brightness and auto-rotate in the quick panel; you allow it in Settings ("Modify system settings"). -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- The Timer widget starts a countdown in your Clock app. -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+        </intent>
+        <!-- Quick dial: the contact picker. Helm reads only the one number you pick. -->
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="vnd.android.cursor.dir/phone_v2" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+        </intent>
+        <intent>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent>
+        <intent>
+            <action android:name="org.adw.launcher.THEMES" />
+        </intent>
+        <intent>
+            <action android:name="com.novalauncher.THEME" />
+        </intent>
+    </queries>
+
+    <application
+        android:label="Helm"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.Helm"
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:enableOnBackInvokedCallback="true">
+
+        <activity
+            android:name=".HelmActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true"
+            android:stateNotNeeded="true"
+            android:resumeWhilePausing="true"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|smallestScreenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="Helm Settings"
+            android:theme="@style/Theme.Helm.Settings"
+            android:taskAffinity="com.helm.launcher.settings"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Helm's quick panel and recent apps. ASSIST: pick Helm as the digital assistant app and
+             long-pressing Home opens recents. -->
+        <activity
+            android:name=".Overlay"
+            android:exported="true"
+            android:label="Helm recents"
+            android:theme="@style/Theme.Helm.Overlay"
+            android:taskAffinity="com.helm.launcher.overlay"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:noHistory="false"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Helm's wallpaper with a live Nothing-style clock on the lock screen. -->
+        <service
+            android:name=".HelmWallpaper"
+            android:exported="true"
+            android:label="Helm"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/wallpaper" />
+        </service>
+
+        <!-- Optional: what's playing (Music widget, quick panel) and icon dots. You turn it on in Settings. -->
+        <service
+            android:name=".HelmNotifications"
+            android:exported="true"
+            android:label="Helm music &amp; dots"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".HelmAccessibility"
+            android:exported="false"
+            android:label="Helm gestures"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility" />
+        </service>
+    </application>
+</manifest>

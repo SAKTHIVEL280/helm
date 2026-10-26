@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">Lets Helm\'s home gestures lock the screen and open notifications or quick settings. Helm reads nothing on screen.</string>
+    <string name="wallpaper_description">The Helm wallpaper, with a live dot-matrix clock while your phone is locked.</string>
+</resources>
